@@ -28,6 +28,15 @@ pip install requests
 
 ## Download script
 
+```
+mkdir zabbix
+
+cd zabbix
+
+git clone https://github.com/niemdinhtrong/py_add_host_zabbix.git
+
+cd py_add_host_zabbix
+```
 
 ## Khai báo các host
 
