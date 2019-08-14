@@ -33,13 +33,12 @@ class Zabbix(object):
         if r.status_code != 200:
             print('problem -key')
             print(r.status_code)
-            print(r.text)
             sys.exit()
+            return ("Error")
         else:
-            print(r)
             result=r.json()
             auth_key=result['result']
-            return auth_key
+            return (auth_key, "Ok")
 
     def get_tem_id(self, auth_key):
         payload={
@@ -59,8 +58,11 @@ class Zabbix(object):
         r = requests.post(self.url, data=json.dumps(payload),
                       headers=self.headers, verify=True,
                       auth=HTTPBasicAuth(self.username,self.passwd))
-        a = r.json()['result'][0]
-        return(a['templateid'])
+        if r.status_code != 200:
+            return ("Error")
+        else:
+            a = r.json()['result'][0]
+            return(a['templateid'], "Ok")
 
     def get_group_id(self, auth_key):
         payload={
@@ -80,10 +82,13 @@ class Zabbix(object):
         r = requests.post(self.url, data=json.dumps(payload),
                       headers=self.headers, verify=True,
                       auth=HTTPBasicAuth(self.username,self.passwd))
-        a = r.json()['result'][0]
-        groupid = a['groupid']
-        return groupid
-    
+        if r.status_code != 200:
+            return ("Error")
+        else:
+            a = r.json()['result'][0]
+            groupid = a['groupid']
+            return (groupid, "Ok")
+
     def add_host(self, auth_key, list_host, groupid, templateid):
         i = 0
         for host in list_host:
@@ -123,4 +128,7 @@ class Zabbix(object):
             r = requests.post(self.url, data=json.dumps(payload),
                           headers=self.headers, verify=True,
                           auth=HTTPBasicAuth(self.username,self.passwd))
-            
+        #if r.status_code != 200:
+        #    return ("Error")
+        #else:
+        #    return ("Ok")

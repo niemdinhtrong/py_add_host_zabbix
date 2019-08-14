@@ -24,7 +24,7 @@ template = config['zabbix']['template_name']
 list_host = get_host('hosts')
 
 zabi = Zabbix(username, passwd, group, template)
-auth_key = zabi.get_aut_key()
-templateid = zabi.get_tem_id(auth_key)
-groupid = zabi.get_group_id(auth_key)
+auth_key, sta_1 = zabi.get_aut_key()
+templateid, sta_2 = zabi.get_tem_id(auth_key)
+groupid, sta_3 = zabi.get_group_id(auth_key)
 zabi.add_host(auth_key, list_host, groupid, templateid)
