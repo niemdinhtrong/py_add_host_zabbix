@@ -36,9 +36,12 @@ class Zabbix(object):
             sys.exit()
             return ("Error")
         else:
-            result=r.json()
-            auth_key=result['result']
-            return (auth_key, "Ok")
+            try:
+                result=r.json()
+                auth_key=result['result']
+                return (auth_key, "Ok")
+            except:
+                return ("Error", "Error")
 
     def get_tem_id(self, auth_key):
         payload={
@@ -61,8 +64,12 @@ class Zabbix(object):
         if r.status_code != 200:
             return ("Error")
         else:
-            a = r.json()['result'][0]
-            return(a['templateid'], "Ok")
+            try:
+                a = r.json()['result'][0]
+                print("tem: ", a['templateid'])
+                return(a['templateid'], "Ok")
+            except:
+                return ("Error", "Error")
 
     def get_group_id(self, auth_key):
         payload={
@@ -85,17 +92,20 @@ class Zabbix(object):
         if r.status_code != 200:
             return ("Error")
         else:
-            a = r.json()['result'][0]
-            groupid = a['groupid']
-            return (groupid, "Ok")
+            try:
+                a = r.json()['result'][0]
+                groupid = a['groupid']
+                print("Group: ", groupid)
+                return (groupid, "Ok")
+            except:
+                return ("Error", "Error")
 
     def add_host(self, auth_key, list_host, groupid, templateid):
         i = 0
+        status_l = []
         for host in list_host:
-            print(host)
             ip = host[1]
             name = host[0]
-            print(name)  
             payload={
                 "jsonrpc": "2.0",
                 "method": "host.create",
@@ -128,7 +138,16 @@ class Zabbix(object):
             r = requests.post(self.url, data=json.dumps(payload),
                           headers=self.headers, verify=True,
                           auth=HTTPBasicAuth(self.username,self.passwd))
-        #if r.status_code != 200:
-        #    return ("Error")
-        #else:
-        #    return ("Ok")
+            print(r.json())
+            if 'result' in r.json():
+                status_l.append("Ok")
+            else:
+                status_l.append("Error")
+        print(status_l)
+        for status in status_l:
+            if status == "Error":
+                sta = "Error"
+                break
+            else:
+                sta = "Ok"
+        return sta
